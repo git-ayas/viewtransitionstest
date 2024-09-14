@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite App</title>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+
+<body>
+  <div id="cardManager" x-data="cardManager" class="max-w-2xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Card Manager</h1>
+    <!-- Add Card Button -->
+    <button @click="addCard" class="bg-blue-500 text-white px-4 py-2 rounded mb-4">Add Card</button>
+
+    <!-- Cards Container -->
+    <div class="grid grid-cols-1 gap-4">
+      <template x-for="(card, index) in cards" :key="index">
+        <div class="bg-white p-4 rounded shadow-md flex justify-between items-center">
+          <p class="text-lg text-stone-800 font-medium">Card #<span x-text="index + 1"></span></p>
+          <button @click="removeCard(index)" class="bg-red-500 text-white px-2 py-1 rounded">Remove</button>
+        </div>
+      </template>
+    </div>
+  </div>
+
+  <div id="app"></div>
+  <script type="module" src="/main.js"></script>
+  <script>
+
+    const WithTransition = (cb) => {
+      if (document.startViewTransition) {
+        document.startViewTransition(cb)
+        return
+      }
+      cb()
+    }
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('cardManager', () => ({
+        cards: [],
+        addCard() {
+          if (document.startViewTransition) {
+            const _me = this
+            document.startViewTransition(() => _me.cards.push({}))
+            return
+          }
+          this.cards.push({});
+        },
+        removeCard(index) {
+          const spliceAction = () => this.cards.splice(index, 1);
+          WithTransition(spliceAction)
+        }
+      }));
+    });
+  </script>
+</body>
+
+
+</html>
